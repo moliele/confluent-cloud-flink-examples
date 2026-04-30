@@ -1,0 +1,13 @@
+confluent_cloud_api_key    = "pk-XXXXXXXXXXXXXXXX"
+confluent_cloud_api_secret = "XXXXXXXXXXXXXXXXXXXX"
+
+environment_name           = "flink-env"
+
+cloud_provider             = "AWS"
+cloud_region               = "eu-west-1"
+
+kafka_cluster_name         = "prod-kafka-cluster"
+flink_compute_pool_name    = "prod-flink-compute-pool"
+flink_max_cfu              = 10
+prefix                     = "x"
+datagen_topic_name         = "events"
