@@ -15,6 +15,9 @@ This project automates the deployment of a complete **Apache Flink** environment
 * **Security:** Automated creation of Service Accounts and API Keys with appropriate RBAC roles (e.g., FlinkDeveloper).
 
 ---
+## Confluent Documentation about the use case
+* [Handle Multiple Event Types with Confluent Cloud for Apache Flink](https://docs.confluent.io/cloud/current/flink/how-to-guides/multiple-event-types.html#best-practices)
+---
 
 ## 🛠️ Prerequisites
 * [Terraform](https://www.terraform.io/downloads) 
