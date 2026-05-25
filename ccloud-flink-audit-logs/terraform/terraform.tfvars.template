@@ -1,0 +1,21 @@
+confluent_cloud_api_key    = "pk-XXXXXXXXXXXXXXXX"
+confluent_cloud_api_secret = "XXXXXXXXXXXXXXXXXXXX"
+
+environment_name           = "flink-env"
+
+cloud_provider             = "AWS"
+cloud_region               = "eu-west-1"
+
+kafka_cluster_name         = "prod-kafka-cluster"
+flink_compute_pool_name    = "prod-flink-compute-pool"
+flink_max_cfu              = 10
+prefix                     = "x"
+topic_name                 = "confluent-audit-log-events"
+
+
+# Enable Audit Logs Cluster Linking
+enable_audit_logs_cl = true
+audit_log_environment_id = "env-xxxxx"
+audit_log_cluster_id     = "lkc-xxxxx"
+audit_log_api_key        = "your-audit-log-api-key"
+audit_log_api_secret     = "your-audit-log-api-secret"
