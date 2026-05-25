@@ -74,8 +74,11 @@ terraform apply
 Once the infrastructure is deployed, follow the specific guide for the data format you wish to test:
 
 1. [Avro Routing Guide](avro.md)
+   - [Avro Routing Guide - using Materialized tables](avro-mt.md)
 2. [JSON Routing Guide](json.md)
-3. [JSON Schema Registry Guide](json_sr.md)
+   - [JSON Routing Guide - using Materialized tables](json.md)
+3. [JSON Schema Registry Guide](json_sr-mt.md)
+   - [JSON Schema Registry Guide - using Materialized tables](json_st-mv.md)
 
 ## 🧹 Cleanup
 To avoid ongoing costs for the Kafka cluster and Flink Compute Pool:
