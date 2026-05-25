@@ -7,7 +7,8 @@ This repository is a curated collection of practical examples and labs designed 
 
 | Lab / Example | Description                                                                                | Supported Formats |
 | :--- |:-------------------------------------------------------------------------------------------| :--- |
-| [**ccloud-flink-multi-event-routing**](./ccloud-flink-multi-event-routing) | Intelligent routing of "mixed topics" (Topics with multiple schemas) into dedicated sinks. | Avro, JSON, JSON_SR [cite: 18, 19] |
+| [**ccloud-flink-multi-event-routing**](./ccloud-flink-multi-event-routing) | Intelligent routing of "mixed topics" (Topics with multiple schemas) into dedicated sinks. | Avro, JSON, JSON_SR|
+| [**ccloud-flink-audit-logs**](./ccloud-flink-audit-logs) | Example pipelines and processing patterns for Confluent Cloud audit logs using Flink. | JSON, JSON_SR |
 
 ---
 
