@@ -367,7 +367,7 @@ FROM `confluent-audit-log-events`;
 
 Then create routed outputs such as:
 
-*Please replace the <lkc-xxxxxx> of the following query with the cluster id you want to capture the logs.*
+*Please replace the `<lkc-xxxxxx>` of the following query with the cluster id you want to capture the logs.*
 
 ```sql
 CREATE MATERIALIZED TABLE `<prefix>-audit-cluster` AS
