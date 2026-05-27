@@ -325,24 +325,76 @@ Use a base parsed Materialized Table:
 ```sql
 CREATE MATERIALIZED TABLE `audit-logs-parsed` AS
 SELECT
-  CAST(val AS STRING) AS payload,
-  JSON_VALUE(CAST(val AS STRING), '$.id') AS event_id,
-  JSON_VALUE(CAST(val AS STRING), '$.time') AS event_time,
-  JSON_VALUE(CAST(val AS STRING), '$.type') AS event_type,
-  JSON_VALUE(CAST(val AS STRING), '$.data.serviceName') AS service_name,
-  JSON_VALUE(CAST(val AS STRING), '$.data.methodName') AS method_name,
-  JSON_VALUE(CAST(val AS STRING), '$.data.authenticationInfo.identity') AS principal_identity,
+  CAST(val AS STRING) AS payload, -- raw event as JSON string
+
+  -- top-level event context
+  JSON_VALUE(CAST(val AS STRING), '$.id') AS event_id, -- unique event ID
+  JSON_VALUE(CAST(val AS STRING), '$.time') AS event_time, -- when the event happened
+  JSON_VALUE(CAST(val AS STRING), '$.type') AS event_type, -- event category, for example authentication or authorization
+  JSON_VALUE(CAST(val AS STRING), '$.source') AS source, -- context where the event happened, often the cluster CRN
+  JSON_VALUE(CAST(val AS STRING), '$.subject') AS subject, -- resource affected by the event
+  JSON_VALUE(CAST(val AS STRING), '$.specversion') AS specversion, -- CloudEvents spec version
+  JSON_VALUE(CAST(val AS STRING), '$.datacontenttype') AS datacontenttype, -- payload format, usually application/json
+
+  -- main data payload
+  JSON_VALUE(CAST(val AS STRING), '$.data.serviceName') AS service_name, -- cluster or service where the event happened
+  JSON_VALUE(CAST(val AS STRING), '$.data.methodName') AS method_name, -- operation being checked or executed
+  JSON_VALUE(CAST(val AS STRING), '$.data.resourceName') AS resource_name, -- target resource, for example cluster, topic, or group
+
+  -- authentication details
+  JSON_VALUE(CAST(val AS STRING), '$.data.authenticationInfo.principal') AS principal, -- authenticated principal
+  JSON_VALUE(CAST(val AS STRING), '$.data.authenticationInfo.identity') AS principal_identity, -- identity in CRN format when present
   JSON_VALUE(CAST(val AS STRING), '$.data.authenticationInfo.result') AS authentication_result,
-  JSON_VALUE(CAST(val AS STRING), '$.data.authorizationInfo.result') AS authorization_result,
-  JSON_VALUE(CAST(val AS STRING), '$.data.requestMetadata.clientId') AS client_id,
-  JSON_VALUE(CAST(val AS STRING), '$.data.result.status') AS result_status,
-  JSON_VALUE(CAST(val AS STRING), '$.data.result.data.errorCode') AS error_code,
-  JSON_VALUE(CAST(val AS STRING), '$.data.result.data.errorType') AS error_type,
-  JSON_VALUE(CAST(val AS STRING), '$.data.resourceName') AS resource_name
+
+  -- authorization details
+  JSON_VALUE(CAST(val AS STRING), '$.data.authorizationInfo.granted') AS authorization_granted, -- whether authorization was allowed
+  JSON_VALUE(CAST(val AS STRING), '$.data.authorizationInfo.operation') AS authorization_operation, -- authorized operation
+  JSON_VALUE(CAST(val AS STRING), '$.data.authorizationInfo.resourceType') AS authorization_resource_type, -- type of resource, for example Topic or Cluster
+  JSON_VALUE(CAST(val AS STRING), '$.data.authorizationInfo.resourceName') AS authorization_resource_name, -- logical resource name used in the check
+  JSON_VALUE(CAST(val AS STRING), '$.data.authorizationInfo.result') AS authorization_result, -- logical resource name used in the check
+
+  -- request details
+  JSON_VALUE(CAST(val AS STRING), '$.data.request.correlationId') AS correlation_id, -- request correlation ID
+  JSON_VALUE(CAST(val AS STRING), '$.data.request.clientId') AS client_id, -- client identifier
+
+  -- result details
+  JSON_VALUE(CAST(val AS STRING), '$.data.result.status') AS result_status, -- final status when present
+  JSON_VALUE(CAST(val AS STRING), '$.data.result.data.errorCode') AS error_code, -- error code when failed
+  JSON_VALUE(CAST(val AS STRING), '$.data.result.data.errorType') AS error_type -- error type when failed
+
 FROM `confluent-audit-log-events`;
 ```
 
 Then create routed outputs such as:
+
+*Please replace the <lkc-xxxxxx> of the following query with the cluster id you want to capture the logs.*
+
+```sql
+CREATE MATERIALIZED TABLE `<prefix>-audit-cluster` AS
+SELECT payload,
+  event_id,
+  event_time,
+  event_type,
+  source,
+  subject,
+  service_name,
+  method_name,
+  resource_name,
+  principal,
+  principal_identity,
+  authentication_result,
+  authorization_granted,
+  authorization_operation,
+  authorization_resource_type,
+  authorization_resource_name,
+  authorization_result,
+  client_id,
+  result_status,
+  error_code,
+  error_type
+FROM `audit-logs-parsed`
+WHERE service_name LIKE '%kafka=<lkc-xxxxxx>%'; -- cluster where the event happened
+```
 
 ```sql
 CREATE MATERIALIZED TABLE `<prefix>-audit-authz-denied` AS
